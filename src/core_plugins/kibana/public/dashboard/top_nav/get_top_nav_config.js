@@ -65,6 +65,7 @@ function getFullScreenConfig(action) {
 /**
  * @returns {kbnTopNavConfig}
  */
+// eslint-disable-next-line no-unused-vars
 function getEditConfig(action) {
   return {
     key: 'edit',
@@ -101,6 +102,7 @@ function getViewConfig(action) {
 /**
  * @returns {kbnTopNavConfig}
  */
+// eslint-disable-next-line no-unused-vars
 function getCloneConfig(action) {
   return {
     key: TopNavIds.CLONE,
