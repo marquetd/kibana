@@ -17,28 +17,25 @@
  * under the License.
  */
 
-import { resolve } from 'path';
-
 import Promise from 'bluebird';
 import { mkdirp as mkdirpNode } from 'mkdirp';
-
+import { resolve } from 'path';
+import { injectVars } from './inject_vars';
+import mappings from './mappings.json';
+import { registerFieldFormats } from './server/field_formats/register';
+import handleEsError from './server/lib/handle_es_error';
 import manageUuid from './server/lib/manage_uuid';
-import { searchApi } from './server/routes/api/search';
-import { scrollSearchApi } from './server/routes/api/scroll_search';
-import { importApi } from './server/routes/api/import';
+import * as systemApi from './server/lib/system_api';
 import { exportApi } from './server/routes/api/export';
 import { homeApi } from './server/routes/api/home';
+import { importApi } from './server/routes/api/import';
 import { managementApi } from './server/routes/api/management';
 import { scriptsApi } from './server/routes/api/scripts';
+import { scrollSearchApi } from './server/routes/api/scroll_search';
+import { searchApi } from './server/routes/api/search';
 import { registerSuggestionsApi } from './server/routes/api/suggestions';
-import { registerFieldFormats } from './server/field_formats/register';
 import { registerTutorials } from './server/tutorials/register';
-import * as systemApi from './server/lib/system_api';
-import handleEsError from './server/lib/handle_es_error';
-import mappings from './mappings.json';
 import { getUiSettingDefaults } from './ui_setting_defaults';
-
-import { injectVars } from './inject_vars';
 
 const mkdirp = Promise.promisify(mkdirpNode);
 
@@ -50,7 +47,7 @@ export default function (kibana) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
         defaultAppId: Joi.string().default('home'),
-        index: Joi.string().default('.kibana')
+        index: Joi.string().default('.kibana'),
       }).default();
     },
 
@@ -78,14 +75,18 @@ export default function (kibana) {
           url: `${kbnBaseUrl}#/discover`,
           description: 'interactively explore your data',
           icon: 'plugins/kibana/assets/discover.svg',
-        }, {
+          hidden: true,
+        },
+        {
           id: 'kibana:visualize',
           title: 'Visualize',
           order: -1002,
           url: `${kbnBaseUrl}#/visualize`,
           description: 'design data visualizations',
           icon: 'plugins/kibana/assets/visualize.svg',
-        }, {
+          hidden: true,
+        },
+        {
           id: 'kibana:dashboard',
           title: 'Dashboard',
           order: -1001,
@@ -98,34 +99,36 @@ export default function (kibana) {
           subUrlBase: `${kbnBaseUrl}#/dashboard`,
           description: 'compose visualizations for much win',
           icon: 'plugins/kibana/assets/dashboard.svg',
-        }, {
+        },
+        {
           id: 'kibana:dev_tools',
           title: 'Dev Tools',
           order: 9001,
           url: '/app/kibana#/dev_tools',
           description: 'development tools',
-          icon: 'plugins/kibana/assets/wrench.svg'
-        }, {
+          icon: 'plugins/kibana/assets/wrench.svg',
+          hidden: true,
+        },
+        {
           id: 'kibana:management',
           title: 'Management',
           order: 9003,
           url: `${kbnBaseUrl}#/management`,
           description: 'define index patterns, change config, and more',
           icon: 'plugins/kibana/assets/settings.svg',
-          linkToLastSubUrl: false
+          linkToLastSubUrl: false,
+          hidden: true,
         },
       ],
 
       injectDefaultVars(server, options) {
         return {
           kbnIndex: options.index,
-          kbnBaseUrl
+          kbnBaseUrl,
         };
       },
 
-      translations: [
-        resolve(__dirname, './translations/en.json')
-      ],
+      translations: [resolve(__dirname, './translations/en.json')],
 
       mappings,
       uiSettingDefaults: getUiSettingDefaults(),
@@ -160,6 +163,6 @@ export default function (kibana) {
       server.expose('systemApi', systemApi);
       server.expose('handleEsError', handleEsError);
       server.injectUiAppVars('kibana', () => injectVars(server));
-    }
+    },
   });
 }

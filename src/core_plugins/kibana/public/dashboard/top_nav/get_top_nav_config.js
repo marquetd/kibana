@@ -38,9 +38,7 @@ export function getTopNavConfig(dashboardMode, actions, hideWriteControls) {
           ]
           : [
             getFullScreenConfig(actions[TopNavIds.FULL_SCREEN]),
-            getShareConfig(),
-            getCloneConfig(actions[TopNavIds.CLONE]),
-            getEditConfig(actions[TopNavIds.ENTER_EDIT_MODE])
+            getShareConfig()
           ]
       );
     case DashboardViewMode.EDIT:

@@ -37,8 +37,7 @@
 #kibana.index: ".kibana"
 
 # The default application to load.
-#kibana.defaultAppId: "home"
-
+kibana.defaultAppId: 'dashboard'
 # If your Elasticsearch is protected with basic authentication, these settings provide
 # the username and password that the Kibana server uses to perform maintenance on the Kibana
 # index at startup. Your Kibana users still need to authenticate with Elasticsearch, which
